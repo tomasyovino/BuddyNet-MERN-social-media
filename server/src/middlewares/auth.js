@@ -7,7 +7,7 @@ export const verifyToken = async (req, res, next) => {
 
         if(!token) return res.status(403).json({ message: "No token provided" });
 
-        if(token.startsWith("Bearer ")) token.slice(7, token.length).trimLeft();
+        if(token.startsWith("Bearer ")) token = token.slice(7, token.length).trimLeft();
 
         const verified = jwt.verify(token, config.jwt_secret);
         req.user = verified;
