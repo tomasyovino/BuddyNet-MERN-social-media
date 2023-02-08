@@ -14,6 +14,37 @@ class PostDAO extends DAOContainer {
         };
         return instance;
     };
+
+    async createPost(userId, firstName, lastName, location, description, userPicturePath, picturePath) {
+        const newPost = new Post({
+            userId,
+            firstName,
+            lastName,
+            location,
+            description,
+            userPicturePath,
+            picturePath,
+            likes: {},
+            comments: []
+        });
+        const savedPost = await newPost.save();
+
+        return savedPost;
+    };
+
+    async getUserPosts(userId) {
+        const posts = await Post.find({ userId });
+        return posts;
+    };
+
+    async updatePost(id, likes) {
+        const post = await Post.findByIdAndUpdate(
+            id,
+            { likes },
+            { new: true }
+        );
+        return post;
+    };
 };
 
 export default PostDAO;
