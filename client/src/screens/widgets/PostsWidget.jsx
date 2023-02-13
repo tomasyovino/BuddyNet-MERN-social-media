@@ -5,6 +5,7 @@ import PostWidget from "./PostWidget";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
     const dispatch = useDispatch();
+    const loggedUserId = userId;
     const posts = useSelector((state) => state.posts);
     const token = useSelector((state) => state.token);
   
@@ -19,7 +20,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   
     const getUserPosts = async () => {
         const response = await fetch(
-            `${process.env.REACT_APP_BASE_URL}/api/posts/${userId}/posts`,
+            `${process.env.REACT_APP_BASE_URL}/api/posts/${loggedUserId}/posts`,
             {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
@@ -64,6 +65,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                             userPicturePath={userPicturePath}
                             likes={likes}
                             comments={comments}
+                            loggedUserId={loggedUserId === userId ? true : false}
                         />
                     )
                 )
