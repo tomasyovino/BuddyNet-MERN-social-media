@@ -19,7 +19,7 @@ const App = () => {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-            <Route path="/auth" element={<LoginPage />} />
+            <Route path="/auth" element={ isAuth ? <Navigate to="/" /> : <LoginPage />} />
             <Route path="/" element={isAuth ? <HomePage /> : <Navigate to="/auth" />} />
             <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/auth" />} />
           </Routes>
