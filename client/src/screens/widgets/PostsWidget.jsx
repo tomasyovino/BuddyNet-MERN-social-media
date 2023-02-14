@@ -20,8 +20,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   
     const getUserPosts = async () => {
         const response = await fetch(
-            `${process.env.REACT_APP_BASE_URL}/api/posts/${loggedUserId}/posts`,
-            {
+            `${process.env.REACT_APP_BASE_URL}/api/posts/${loggedUserId}/posts`, {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             }
@@ -41,7 +40,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     return (
         <>
             {
-                posts.map(
+                posts.slice().reverse().map(
                     ({
                         _id,
                         userId,
