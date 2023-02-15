@@ -1,6 +1,7 @@
 import UserDAO from "../persistence/daos/UserDAO.js";
 import UserDTO from "../persistence/dtos/UserDTO.js";
 import UserFriendDTO from "../persistence/dtos/UserFriendDTO.js";
+import bcrypt from "bcrypt";
 
 let userDAO = UserDAO.createInstance();
 
@@ -57,5 +58,26 @@ export const addRemoveFriend = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Internal server error: Error updating users", error: err.message });
+    };
+};
+
+export const updateUserById = async (req, res) => {
+    try {
+        if(req.body.password) {
+            console.log("pepe")
+            const salt = await bcrypt.genSalt();
+            const passwordHash = await bcrypt.hash(req.body.password, salt);
+            req.body.password = passwordHash;
+        };
+        const user = await userDAO.updateElementById(req.params.id, req.body);
+
+        if(user) {
+            res.status(200).json(user);
+        } else {
+            res.status(404).json({ message: "User not found" });
+        };
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Internal server error: Error updating user", error: err.message });
     };
 };

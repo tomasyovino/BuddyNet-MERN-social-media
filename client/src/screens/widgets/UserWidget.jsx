@@ -8,15 +8,17 @@ import { Box, Typography, Divider, useTheme } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
+import ModalWidget from "./ModalWidget";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { light } from "@mui/material/styles/createPalette";
 
 const UserWidget = ({ userId, picturePath }) => {
     const [user, setUser] = useState(null);
+    const [open, setOpen] = useState(false);
     const { palette } = useTheme();
     const navigate = useNavigate();
+    const actualUserId = useSelector((state) => state.user._id);
     const token = useSelector((state) => state.token);
     const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
@@ -30,6 +32,8 @@ const UserWidget = ({ userId, picturePath }) => {
         const data = await response.json();
         setUser(data);
     };
+
+    const handleOpen = () => setOpen(true);
 
     useEffect(() => {
         getUser();
@@ -52,18 +56,28 @@ const UserWidget = ({ userId, picturePath }) => {
             <FlexBetween
                 gap="0.5rem"
                 pb="1.1rem"
-                onClick={() => navigate(`profile/${userId}`)}
             >
                 <FlexBetween gap="1rem">
-                    <UserImage image={picturePath} />
-                    <Box>
+                    <UserImage 
+                        image={picturePath}
+                        onClick={() => {
+                            navigate(`/profile/${userId}`)
+                            navigate(0);
+                        }}
+                    />
+                    <Box
+                        onClick={() => {
+                            navigate(`/profile/${userId}`)
+                            navigate(0);
+                        }}
+                    >
                         <Typography
                             variant="h4"
                             color={dark}
                             fontWeight="500"
                             sx={{
                                 "&:hover": {
-                                    color: palette.primary-light,
+                                    color: palette.primary.light,
                                     cursor: "pointer"
                                 }
                             }}
@@ -73,7 +87,12 @@ const UserWidget = ({ userId, picturePath }) => {
                         <Typography color={medium}>{friends.length} friends</Typography>
                     </Box>
                 </FlexBetween>
-                <ManageAccountsOutlined />
+                { actualUserId === userId 
+                    ? <ManageAccountsOutlined 
+                        sx={{ "&:hover": {cursor: "pointer"} }} 
+                        onClick={handleOpen}
+                    /> 
+                    : null }
             </FlexBetween>
 
             <Divider />
@@ -133,6 +152,7 @@ const UserWidget = ({ userId, picturePath }) => {
                     <EditOutlined  sx={{ color: main }}/>
                 </FlexBetween>
             </Box>
+            <ModalWidget open={open} setOpen={setOpen} />
         </WidgetWrapper>
     );
 };

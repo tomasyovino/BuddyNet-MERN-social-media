@@ -8,10 +8,12 @@ let userDAO = UserDAO.createInstance();
 
 export const registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, picturePath, friends, location, occupation } = req.body;
+        let { firstName, lastName, email, password, picturePath, friends, location, occupation } = req.body;
 
         const salt = await bcrypt.genSalt();
         const passwordHash = await bcrypt.hash(password, salt);
+
+        if(!picturePath) picturePath = "people.png";
 
         const newUser = await userDAO.createNewUser(firstName, lastName, email, passwordHash, picturePath, friends, location, occupation);
 
