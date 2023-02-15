@@ -6,6 +6,8 @@ import {
     useMediaQuery,
     Typography,
     useTheme,
+    FormHelperText,
+    CircularProgress
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
@@ -48,6 +50,8 @@ const initialValuesLogin = {
 
 const Form = () => {
     const [pageType, setPageType] = useState("login");
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState({});
     const { palette } = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -56,43 +60,61 @@ const Form = () => {
     const isRegister = pageType === "register";
 
     const register = async (values, onSubmitProps) => {
-        // This allows us to send info with image
-        const formData = new FormData();
-        for(let value in values) {
-            formData.append(value, values[value])
+        try {
+            setIsLoading(true);
+            const formData = new FormData();
+            for(let value in values) {
+                formData.append(value, values[value])
+            };
+            if(values.picture) formData.append("picturePath", values.picture.name);
+
+            const savedUserResponse = await fetch(
+                `${process.env.REACT_APP_BASE_URL}/api/auth/register`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+            const savedUser = await savedUserResponse.json();
+            onSubmitProps.resetForm();
+
+            if(savedUser) setPageType("login");
+        } finally {
+            setIsLoading(false);
         };
-        if(values.picture) formData.append("picturePath", values.picture.name);
-
-        const savedUserResponse = await fetch(
-            `${process.env.REACT_APP_BASE_URL}/api/auth/register`,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
-        const savedUser = await savedUserResponse.json();
-        onSubmitProps.resetForm();
-
-        if(savedUser) setPageType("login");
     };
 
     const login = async (values, onSubmitProps) => {
-        const loggedInResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/api/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(values)
-        });
-        const loggedIn = await loggedInResponse.json();
-        onSubmitProps.resetForm();
-
-        if(loggedIn) {
-            dispatch(
-                setLogin({
-                    user: loggedIn.user,
-                    token: loggedIn.token
-                })
-            );
-            navigate("/");
+        try {
+            setIsLoading(true);
+            const loggedInResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/api/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values)
+            });
+            const loggedIn = await loggedInResponse.json();
+            onSubmitProps.resetForm();
+    
+            if(loggedIn) {
+                if(loggedIn.message) {
+                    let errors = {};
+                    if(loggedIn.message === "Invalid e-mail address") errors.email = loggedIn.message;
+                    if(loggedIn.message === "Invalid password") errors.password = loggedIn.message;
+                    setError(errors);
+                    return Object.keys(errors).length === 0;
+                } else {
+                    setError({});
+                    dispatch(
+                        setLogin({
+                            user: loggedIn.user,
+                            token: loggedIn.token
+                        })
+                    );
+                    navigate("/");
+                };
+            };
+        } finally {
+            setIsLoading(false);
         };
     };
 
@@ -216,6 +238,7 @@ const Form = () => {
                             helperText={touched.email && errors.email}
                             sx={{ gridColumn: "span 4" }}
                         />
+                        {error.email && <FormHelperText sx={{ color: palette.neutral.error }}>* {error.email}</FormHelperText>}
                         <TextField 
                             label="Password"
                             type="password"
@@ -227,6 +250,7 @@ const Form = () => {
                             helperText={touched.password && errors.password}
                             sx={{ gridColumn: "span 4" }}
                         />
+                        {error.password && <FormHelperText sx={{ color: palette.neutral.error }}>* {error.password}</FormHelperText>}
                     </Box>
 
                     {/* BUTTONS */}
@@ -242,7 +266,9 @@ const Form = () => {
                                 "&:hover": { color: palette.primary.main }
                             }}
                         >
-                            { isLogin ? "LOGIN" : "REGISTER" }
+                            { 
+                                isLogin && !isLoading ? "LOGIN" : !isLogin && !isLoading ? "REGISTER" : <CircularProgress size="18px" color="inherit" />
+                            }
                         </Button>
                         <Typography
                             onClick={() => {
