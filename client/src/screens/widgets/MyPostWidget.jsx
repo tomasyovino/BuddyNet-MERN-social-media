@@ -15,6 +15,7 @@ import {
     Button,
     IconButton,
     useMediaQuery,
+    CircularProgress
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Dropzone from "react-dropzone";
@@ -29,6 +30,7 @@ const MyPostWidget = ({ picturePath }) => {
     const [ isImage, setIsImage ] = useState(false);
     const [ image, setImage ] = useState(null);
     const [ post, setPost ] = useState("");
+    const [ isLoading, setIsLoading ] = useState(false);
     const { palette } = useTheme();
     const { _id } = useSelector((state) => state.user);
     const token = useSelector((state) => state.token);
@@ -37,26 +39,31 @@ const MyPostWidget = ({ picturePath }) => {
     const medium = palette.neutral.medium;
 
     const handlePost = async () => {
-        const formData = new FormData();
-        formData.append("userId", _id);
-        formData.append("description", post);
-        if(image) {
-            formData.append("picture", image);
-            formData.append("picturePath", image.name);
-        };
+        try {
+            setIsLoading(true);
+            const formData = new FormData();
+            formData.append("userId", _id);
+            formData.append("description", post);
+            if(image) {
+                formData.append("picture", image);
+                formData.append("picturePath", image.name);
+            };
 
-        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/posts`, {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            body: formData
-        });
-        const posts = await response.json();
-        
-        dispatch(setPosts({ posts }));
-        setImage(null);
-        setPost("");
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/posts`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+            });
+            const posts = await response.json();
+            
+            dispatch(setPosts({ posts }));
+            setImage(null);
+            setPost("");
+        } finally {
+            setIsLoading(false);
+        };
     };
 
     return (
@@ -172,7 +179,7 @@ const MyPostWidget = ({ picturePath }) => {
                         borderRadius: "3rem",
                     }}
                 >
-                    POST
+                    { isLoading ? <CircularProgress size="18px" color="inherit" /> : "POST" }
                 </Button>
             </FlexBetween>
         </WidgetWrapper>
