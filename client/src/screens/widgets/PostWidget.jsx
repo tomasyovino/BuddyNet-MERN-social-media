@@ -9,6 +9,7 @@ import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
 
@@ -22,8 +23,8 @@ const PostWidget = ({
     userPicturePath,
     likes,
     comments,
-    postIsFromUser,
-    loggedUserId
+    loggedUserId,
+    isFirst
 }) => {
     const [isComments, setIsComments] = useState(false);
     const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const PostWidget = ({
     const loggedInUserId = useSelector((state) => state.user._id);
     const isLiked = Boolean(likes[loggedInUserId]);
     const likeCount = Object.keys(likes).length;
+    const { userId } = useParams();
 
     const { palette } = useTheme();
     const main = palette.neutral.main;
@@ -48,9 +50,9 @@ const PostWidget = ({
         const updatedPost = await response.json();
         dispatch(setPost({ post: updatedPost }));
     };
-
+    
     return (
-        <WidgetWrapper m="2rem 0">
+        <WidgetWrapper m={ isFirst && userId && loggedInUserId !== userId ? null : "2rem 0" }>
             <Friend
                 friendId={postUserId}
                 name={name}
