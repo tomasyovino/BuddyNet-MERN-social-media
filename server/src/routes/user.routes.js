@@ -5,6 +5,7 @@ import upload from "../middlewares/storage.js";
 
 const userRouter = Router();
 
+userRouter.get("/", verifyToken, userCtrl.getAllUsers);
 userRouter.get("/:id", verifyToken, userCtrl.getUser);
 userRouter.get("/:id/friends", verifyToken, userCtrl.getUserFriends);
 userRouter.patch("/:id/:friendId", verifyToken, userCtrl.addRemoveFriend);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Box,
     IconButton,
@@ -20,13 +20,20 @@ import {
     Menu,
     Close,
 } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
+import UserImage from "components/UserImage";
+import debounce from "lodash/debounce";
 
 const Navbar = () => {
-    const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
+    const [ isMobileMenuToggled, setIsMobileMenuToggled ] = useState(false);
+    const [ users, setUsers ] = useState(null);
+    const [ searchText, setSearchText ] = useState('');
+    const [ searchedResults, setSearchedResults ] = useState(null);
+    const userEmail = useSelector((state) => state.user.email);
+    const token = useSelector((state) => state.token);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -38,7 +45,30 @@ const Navbar = () => {
     const primaryLight = theme.palette.primary.light;
     const alt = theme.palette.background.alt;
 
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/users`, {
+                method: "GET",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await response.json();
+            setUsers(data);
+        };
+        fetchUsers();
+    }, [token]);
+
+    const handleSearchChange = debounce((searchText) => {
+        const searchResults = users.filter((user) =>
+            user.fullName.toLowerCase().includes(searchText.toLowerCase()) || user.email.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setSearchedResults(searchResults);
+    }, 500);
     
+    const handleInputChange = (e) => {
+        const searchText = e.target.value;
+        setSearchText(searchText);
+        handleSearchChange(searchText);
+    };
     
     return(
         <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -59,17 +89,78 @@ const Navbar = () => {
                 </Typography>
                 {
                     isNonMobileScreens && (
-                        <FlexBetween 
-                            backgroundColor={neutralLight}
-                            borderRadius="9px"
-                            gap="3rem"
-                            padding="0.1rem 1.5rem"
-                        >
-                            <InputBase placeholder="Search..." />
-                            <IconButton>
-                                <Search />
-                            </IconButton>
-                        </FlexBetween>
+                        <Box position="relative">
+                            <FlexBetween 
+                                backgroundColor={neutralLight}
+                                borderRadius="9px"
+                                gap="3rem"
+                                padding="0.1rem 1.5rem"
+                            >
+                                <InputBase placeholder="Search..." value={searchText} onChange={handleInputChange} />
+                                <IconButton>
+                                    <Search />
+                                </IconButton>
+                            </FlexBetween>
+                            {
+                                searchedResults && searchText !== ""
+                                    ?
+                                        <Box 
+                                            position="absolute" 
+                                            width="100%" 
+                                            backgroundColor={neutralLight} 
+                                            borderRadius="9px"
+                                            padding="1rem 1.5rem"
+                                            zIndex="10"
+                                            display="flex"
+                                            flexDirection="column"
+                                            gap="1rem"
+                                            alignItems="flex-start"
+                                            justifyContent="center"
+                                        >
+                                            {
+                                                searchedResults.length >= 1
+                                                    ?
+                                                        searchedResults.map(user => {
+                                                            if(user.email !== userEmail) {
+                                                                return (
+                                                                    <Box 
+                                                                        key={user._id}
+                                                                        display="flex" 
+                                                                        alignItems="center" 
+                                                                        gap=".5rem"
+                                                                        sx={{
+                                                                            "&:hover": {
+                                                                                cursor: "pointer"
+                                                                            }
+                                                                        }}
+                                                                        onClick={() => {
+                                                                            navigate(`/profile/${user._id}`)
+                                                                            navigate(0);
+                                                                        }}
+                                                                    >
+                                                                        <UserImage image={user.picturePath} size="30px" />
+                                                                        <Typography 
+                                                                            color={dark} 
+                                                                            fontWeight="500"
+                                                                        >
+                                                                            {user.fullName}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                );
+                                                            } else if (
+                                                                user.email === userEmail 
+                                                                && searchedResults.length === 1
+                                                            ) {
+                                                                return <Typography>No users found</Typography>;
+                                                            };
+                                                            return null;
+                                                        })
+                                                    : <Typography>No users found</Typography>
+                                            }
+                                        </Box>
+                                    : null
+                            }
+                        </Box>
                     )
                 }
             </FlexBetween>

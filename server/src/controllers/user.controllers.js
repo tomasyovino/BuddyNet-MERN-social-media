@@ -5,6 +5,17 @@ import bcrypt from "bcrypt";
 
 let userDAO = UserDAO.createInstance();
 
+export const getAllUsers = async (req, res) => {
+    try {
+        const getUsers = await userDAO.findAllElements();
+        const users = getUsers.map(user => new UserDTO(user));
+        res.status(200).json(users);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Internal server error: Error getting users", error: err.message });
+    };
+};
+
 export const getUser = async (req, res) => {
     try {
         const { id } = req.params;
@@ -69,7 +80,8 @@ export const updateUserById = async (req, res) => {
             const passwordHash = await bcrypt.hash(req.body.password, salt);
             req.body.password = passwordHash;
         };
-        const user = await userDAO.updateElementById(req.params.id, req.body);
+        const updatedUser = await userDAO.updateElementById(req.params.id, req.body);
+        const user = new UserDTO(updatedUser);
 
         if(user) {
             res.status(200).json(user);
