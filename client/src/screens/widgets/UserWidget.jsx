@@ -18,26 +18,26 @@ const UserWidget = ({ userId, picturePath }) => {
     const [open, setOpen] = useState(false);
     const { palette } = useTheme();
     const navigate = useNavigate();
-    const actualUserId = useSelector((state) => state.user._id);
+    const trackedUser = useSelector((state) => state.user);
     const token = useSelector((state) => state.token);
     const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
     const main = palette.neutral.main;
 
-    const getUser = async () => {
-        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/users/${userId}`, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await response.json();
-        setUser(data);
-    };
 
     const handleOpen = () => setOpen(true);
 
     useEffect(() => {
+        const getUser = async () => {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/users/${userId}`, {
+                method: "GET",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await response.json();
+            setUser(data);
+        };
         getUser();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [token, userId, trackedUser]);
 
     if(!user) return null;
 
@@ -87,7 +87,7 @@ const UserWidget = ({ userId, picturePath }) => {
                         <Typography color={medium}>{friends.length} friends</Typography>
                     </Box>
                 </FlexBetween>
-                { actualUserId === userId 
+                { trackedUser._id === userId 
                     ? <ManageAccountsOutlined 
                         sx={{ "&:hover": {cursor: "pointer"} }} 
                         onClick={handleOpen}

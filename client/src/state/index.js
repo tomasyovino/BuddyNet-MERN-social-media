@@ -29,6 +29,9 @@ export const authSlice = createSlice({
                 console.log("No user is logged in");
             };
         },
+        setUser: (state, action) => {
+            state.user = action.payload.user;
+        },
         setPosts: (state, action) => {
             state.posts = action.payload.posts;
         },
@@ -39,5 +42,5 @@ export const authSlice = createSlice({
     }
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost } = authSlice.actions;
+export const { setMode, setLogin, setLogout, setFriends, setUser, setPosts, setPost } = authSlice.actions;
 export default authSlice.reducer;
