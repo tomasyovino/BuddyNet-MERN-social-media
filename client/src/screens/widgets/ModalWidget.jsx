@@ -18,6 +18,24 @@ const ModalWidget = ({ open, setOpen }) => {
         border: `2px solid ${palette.background.alt}`,
         boxShadow: 24,
         p: 4,
+        maxHeight: "100%",
+        overflowY: "scroll",
+        '&::-webkit-scrollbar': {
+            width: '8px',
+            height: '8px'
+        },
+        '&::-webkit-scrollbar-thumb': {
+            backgroundColor: palette.background.alt,
+            borderRadius: '4px',
+            boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)"
+        },
+        '&::-webkit-scrollbar-track': {
+            backgroundColor: palette.background.alt,
+            borderRadius: '4px'
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: palette.background.alt
+        }
     };
 
     return (
