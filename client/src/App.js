@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Navigate, Routes, Route } from "react-router-d
 import HomePage from "screens/homePage";
 import LoginPage from "screens/loginPage";
 import ProfilePage from "screens/profilePage";
+import NotFoundPage from "screens/notFoundPage";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -22,6 +23,7 @@ const App = () => {
             <Route path="/auth" element={ isAuth ? <Navigate to="/" /> : <LoginPage />} />
             <Route path="/" element={isAuth ? <HomePage /> : <Navigate to="/auth" />} />
             <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/auth" />} />
+            <Route path='*' element={<NotFoundPage />}/>
           </Routes>
         </ThemeProvider>
       </Router>
