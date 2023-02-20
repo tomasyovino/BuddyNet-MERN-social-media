@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -11,6 +11,7 @@ import NotFoundUser404 from "./NotFoundUser404";
 
 const ProfilePage = () => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
     const { userId } = useParams();
     const actualUserId = useSelector((state) => state.user._id);
     const token = useSelector((state) => state.token);
@@ -32,10 +33,18 @@ const ProfilePage = () => {
                 };
             } catch (error) {
                 console.log(error)
+            } finally {
+                setLoading(false);
             };
         };
         getUser();
     }, [token, userId]);
+
+    if (loading) return (
+        <Box width="100vw" height="100vh" display="flex" justifyContent="center" alignItems="center">
+            <CircularProgress />
+        </Box>
+    );
 
     if (!user) return <NotFoundUser404 />
 
