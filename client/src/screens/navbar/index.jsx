@@ -33,6 +33,8 @@ const Navbar = () => {
     const [ searchText, setSearchText ] = useState('');
     const [ searchedResults, setSearchedResults ] = useState(null);
     const userEmail = useSelector((state) => state.user.email);
+    const userFullName = useSelector((state) => state.user.fullName);
+    const userName = userFullName.split(" ")[0];
     const token = useSelector((state) => state.token);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -181,9 +183,9 @@ const Navbar = () => {
                             <Message sx={{ fontSize: "25px" }} />
                             <Notifications sx={{ fontSize: "25px" }} />
                             <Help sx={{ fontSize: "25px" }} />
-                            <FormControl variant="standard" value={"Full Name"}>
+                            <FormControl variant="standard" value={userName}>
                             <Select
-                                value={"Full Name"}
+                                value={userName}
                                 sx={{
                                     backgroundColor: neutralLight,
                                     width: "150px",
@@ -199,8 +201,8 @@ const Navbar = () => {
                                 }}
                                 input={<InputBase />}
                             >
-                                <MenuItem value={"Full Name"}>
-                                    <Typography>{"Full Name"}</Typography>
+                                <MenuItem value={userName}>
+                                    <Typography>{userName}</Typography>
                                 </MenuItem>
                                 <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
                             </Select>
@@ -260,9 +262,9 @@ const Navbar = () => {
                             <Message sx={{ fontSize: "25px" }} />
                             <Notifications sx={{ fontSize: "25px" }} />
                             <Help sx={{ fontSize: "25px" }} />
-                            <FormControl variant="standard" value={"Full Name"}>
+                            <FormControl variant="standard" value={userName}>
                                 <Select
-                                    value={"Full Name"}
+                                    value={userName}
                                     sx={{
                                     backgroundColor: neutralLight,
                                     width: "150px",
@@ -278,8 +280,8 @@ const Navbar = () => {
                                     }}
                                     input={<InputBase />}
                                 >
-                                    <MenuItem value={"Full Name"}>
-                                        <Typography>{"Full Name"}</Typography>
+                                    <MenuItem value={userName}>
+                                        <Typography>{userName}</Typography>
                                     </MenuItem>
                                     <MenuItem onClick={() => dispatch(setLogout())}>
                                         Log Out
