@@ -45,6 +45,15 @@ class PostDAO extends DAOContainer {
         );
         return post;
     };
+
+    async deleteCommentFromPost(postId, commentId) {
+        const post = await Post.findOneAndUpdate(
+            { _id: postId },
+            { $pull: { comments: { _id: commentId } } },
+            { new: true }
+        );
+        return post;
+    };
 };
 
 export default PostDAO;

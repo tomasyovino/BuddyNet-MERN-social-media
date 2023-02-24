@@ -2,12 +2,14 @@ import {
     ChatBubbleOutlineOutlined,
     FavoriteBorderOutlined,
     FavoriteOutlined,
-    ShareOutlined,
+    ShareOutlined
 } from "@mui/icons-material";
 import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
+import MyCommentWidget from "./MyCommentWidget";
+import CommentWidget from "./CommentWidget";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -55,6 +57,7 @@ const PostWidget = ({
         <WidgetWrapper m={ isFirst && userId && loggedInUserId !== userId ? null : "2rem 0" }>
             <Friend
                 friendId={postUserId}
+                postId={postId}
                 name={name}
                 subtitle={location}
                 userPicturePath={userPicturePath}
@@ -103,15 +106,32 @@ const PostWidget = ({
             </FlexBetween>
             {
                 isComments && (
-                    <Box mt="0.5rem">
+                    <Box mt="0.5rem" display="flex" flexDirection="column">
+                        <Box>
+                            <MyCommentWidget postId={postId} userId={loggedInUserId} />
+                        </Box>
                         {
-                            comments.map((comment, i) => (
-                                <Box key={`${name}-${i}`}>
-                                    <Divider />
-                                    <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                                        {comment}
-                                    </Typography>
-                                </Box>
+                            comments.slice().reverse().map(({
+                                _id,
+                                postId,
+                                userId,
+                                text,
+                                firstName,
+                                lastName,
+                                userPicturePath,
+                                createdAt
+                            }, i) => (
+                                <CommentWidget 
+                                    key={`${name} ${i}`}
+                                    _id={_id}
+                                    postId={postId}
+                                    userId={userId} 
+                                    text={text}
+                                    firstName={firstName}
+                                    lastName={lastName}
+                                    userPicturePath={userPicturePath}
+                                    createdAt={createdAt}
+                                />
                             ))
                         }
                         <Divider />

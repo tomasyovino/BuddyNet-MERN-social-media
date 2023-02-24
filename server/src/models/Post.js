@@ -22,10 +22,40 @@ const postSchema = new mongoose.Schema(
             type: Map,
             of: Boolean
         },
-        comments: {
-            type: Array,
-            default: []
-        }
+        comments: [{
+            _id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Comment'
+            },
+            postId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Post'
+            },
+            userId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            text: {
+                type: String,
+                required: true
+            },
+            firstName: {
+                type: String,
+                required: true
+            },
+            lastName: {
+                type: String,
+                required: true
+            },
+            userPicturePath: {
+                type: String,
+                required: true
+            },
+            createdAt: {
+                type: Date,
+                default: Date.now
+            }
+        }]
     },
     { timestamps: true }
 );

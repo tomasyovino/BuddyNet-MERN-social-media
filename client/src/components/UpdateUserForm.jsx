@@ -16,7 +16,7 @@ import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 import UserImage from "./UserImage";
 
-const UpdateUserForm = ({ onClose }) => {
+const UpdateUserForm = ({ setOpen }) => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [imagePreview, setImagePreview] = useState("");
     const { palette } = useTheme();
@@ -74,7 +74,7 @@ const UpdateUserForm = ({ onClose }) => {
 
             if(savedUser) {
                 dispatch(setUser({user: savedUser}));
-                onClose();
+                setOpen(false);;
             };
         } catch(err) {
             console.log(err);
@@ -206,7 +206,7 @@ const UpdateUserForm = ({ onClose }) => {
                                     onClick={() => {
                                             URL.revokeObjectURL(imagePreview);
                                             setImagePreview("");
-                                            onClose()
+                                            setOpen(false);
                                     }}
                                     sx={{
                                         m: "2rem 0",

@@ -1,7 +1,7 @@
 <h1 align="center">BuddyNet</h1>
 
 <div align="center">
-   <a href="http://porfolio-olive-three.vercel.app/" target="_blank">Tomás Yovino</a> Practice Project.
+   <a href="https://tomasyovino.vercel.app/" target="_blank">Tomás Yovino</a> Practice Project.
 </div>
 
 <div align="center">
@@ -10,7 +10,7 @@
       Demo
     </a>
     <span> | </span>
-    <a href="https://porfolio-olive-three.vercel.app/">
+    <a href="https://tomasyovino.vercel.app/">
       Portfolio
     </a>
   </h3>
@@ -61,13 +61,13 @@ You will be able to view users' profiles as well as they will be able to view yo
 You will be able to change all the characteristics of your user.
 
 ### <strong>Publications</strong>
-You will be able to publish in real time what is happening, your thoughts and your environment.
+You will be able to publish in real time what is happening, your thoughts and your environment. You can also delete your posts if you are not satisfied with them after posting them.
 
 ### <strong>Likes interaction</strong>
 You will be able to "Like" the publications of your interest.
 
 ### <strong>Comments interaction</strong>
-Coming soon!
+You can interact with users' publications by commenting on them. You can also delete your comments if you are not satisfied with them after posting them.
 
 ### <strong>Chat with others</strong>
 Coming soon!
@@ -92,5 +92,5 @@ $ npm start
 
 ## Contact
 
-- Website [tomasyovino.com](https://porfolio-olive-three.vercel.app/)
+- Website [tomasyovino.com](https://tomasyovino.vercel.app/)
 - GitHub [@tomasyovino](https://github.com/tomasyovino)

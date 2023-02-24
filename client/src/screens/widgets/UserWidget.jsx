@@ -9,6 +9,7 @@ import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import ModalWidget from "./ModalWidget";
+import UpdateUserForm from "components/UpdateUserForm";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,39 @@ const UserWidget = ({ userId, picturePath }) => {
     const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
     const main = palette.neutral.main;
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        width: 400,
+        bgcolor: palette.background.alt,
+        border: `2px solid ${palette.background.alt}`,
+        boxShadow: 24,
+        p: 4,
+        maxHeight: "100%",
+        overflowY: "scroll",
+        '&::-webkit-scrollbar': {
+            width: '8px',
+            height: '8px'
+        },
+        '&::-webkit-scrollbar-thumb': {
+            backgroundColor: palette.background.alt,
+            borderRadius: '4px',
+            boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)"
+        },
+        '&::-webkit-scrollbar-track': {
+            backgroundColor: palette.background.alt,
+            borderRadius: '4px'
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: palette.background.alt
+        }
+    };
 
 
     const handleOpen = () => setOpen(true);
@@ -152,7 +186,11 @@ const UserWidget = ({ userId, picturePath }) => {
                     <EditOutlined  sx={{ color: main }}/>
                 </FlexBetween>
             </Box>
-            <ModalWidget open={open} setOpen={setOpen} />
+            <ModalWidget open={open} setOpen={setOpen}>
+                <Box sx={style}>
+                    <UpdateUserForm setOpen={setOpen} />
+                </Box>
+            </ModalWidget>
         </WidgetWrapper>
     );
 };
